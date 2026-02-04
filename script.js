@@ -4,13 +4,16 @@
  */
 
 // --- 1. CONFIGURATION & CONSTANTES ---
-import { env } from './env.js';
 
-const API_KEY = env.API_KEY;
-const GEO_API_URL = env.GEO_API_URL;
-const WEATHER_API_URL = env.WEATHER_API_URL ;
-const RECENT_CITIES_KEY = env.RECENT_CITIES_KEY;
-const MAX_RECENT_CITIES = env.MAX_RECENT_CITIES;
+const API_KEY = 'e29a2cee4208640874c4b0e82ec71877';
+
+const GEO_API_URL = 'https://api.openweathermap.org/geo/1.0/direct';
+
+const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+
+const RECENT_CITIES_KEY = 'weatherAppRecentCities';
+
+const MAX_RECENT_CITIES = 5;
 
 // --- 2. SÉLECTION DU DOM ---
 const dom = {
