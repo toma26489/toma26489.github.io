@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prévisions Météo 5 Jours</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <nav id="floating-menu" class="floating-menu">
+        <a href="#" onclick="scrollToTop(event)" title="Haut de page">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+        <a href="#current-weather-section" title="Météo Actuelle">
+            <i class="fas fa-cloud-sun"></i>
+        </a>
+        <a href="#forecast-section" title="Prévisions">
+            <i class="fas fa-calendar-alt"></i>
+        </a>
+        <a href="#charts-section" title="Graphiques">
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="#maps-section" title="Cartes">
+            <i class="fas fa-map"></i>
+        </a>
+    </nav>
+
+    <div class="container">
+        
+        <header>
+            <h1><i class="fas fa-cloud-sun"></i> Prévisions Météo 5 Jours</h1>
+            <p>Données météo précises avec géolocalisation en option</p>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" id="city-input" placeholder="Rechercher une ville...">
+            <button id="search-btn"><i class="fas fa-search"></i> Rechercher</button>
+            <button id="geolocate-btn"><i class="fas fa-location-crosshairs"></i> Géolocaliser</button>
+            <button id="seasonal-btn"><i class="fas fa-calendar-alt"></i> Prévisions Saisonnières</button>
+        </div>
+        
+        <div id="recent-searches-container"></div>
+        
+        <div id="location-error" class="error" style="display: none;"></div>
+        
+        <div class="current-weather" id="current-weather-section">
+            <div class="location">
+                <i class="fas fa-location-dot"></i>
+                <h2 id="city-name">--</h2>
+            </div>
+            <div class="temp" id="current-temp">--°C</div>
+            <div class="description" id="weather-desc">--</div>
+            <div class="details">
+                <div class="detail-item">
+                    <i class="fas fa-wind"></i>
+                    <div class="detail-value" id="wind-speed">-- km/h</div>
+                    <div class="detail-label">Vent</div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-sun"></i>
+                    <div class="detail-value" id="humidity">--%</div>
+                    <div class="detail-label">Humidité</div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-compress"></i>
+                    <div class="detail-value" id="pressure">-- hPa</div>
+                    <div class="detail-label">Pression</div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-eye"></i>
+                    <div class="detail-value" id="visibility">-- km</div>
+                    <div class="detail-label">Visibilité</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="forecast-container" id="forecast-section">
+            <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Prévisions 5 Jours</h2>
+            <div class="forecast" id="forecast-data"></div>
+        </div>
+        
+        <div id="hourly-forecast-section" style="display: none;">
+            <h2 id="hourly-title" class="section-title"></h2>
+            <div id="hourly-forecast-data" class="forecast"></div>
+        </div>
+        
+        <div class="chart-container" id="charts-section">
+            <h2 class="section-title"><i class="fas fa-chart-line"></i> Températures Min/Max</h2>
+            <canvas id="temp-chart"></canvas>
+        </div>
+        
+        <div class="map-container toggle-section" id="maps-section">
+            <div class="section-header" onclick="toggleSection('windy-wrapper', this)">
+                <h2 class="section-title"><i class="fas fa-map"></i>Carte Météo Interactive</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div id="windy-wrapper" class="toggle-content" style="display: none;">
+                <iframe id="windy-map" src="about:blank" frameborder="0"></iframe>
+            </div>
+        </div>
+        
+        <div class="aifs-container toggle-section">
+            <div class="section-header" onclick="toggleSection('aifs-wrapper', this)">
+                <h2 class="section-title"><i class="fas fa-brain"></i> Prévision AI (ECMWF AIFS)</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div id="aifs-wrapper" class="toggle-content" style="display: none;">
+                <iframe id="aifs-frame" src="about:blank" frameborder="0"></iframe>
+            </div>
+        </div>
+
+        <div class="gefs-container toggle-section">
+            <div class="section-header" onclick="toggleSection('gefs-wrapper', this)">
+                <h2 class="section-title"><i class="fas fa-chart-bar"></i> Prévisions GEFS TEMP 850hpa</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div id="gefs-wrapper" class="toggle-content" style="display: none;">
+                <iframe id="gefs-frame" src="about:blank" frameborder="0"></iframe>
+            </div>
+        </div>
+        
+        <footer class="footer-glass">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <p>© 2026 WeatherApp. Réalisé par <strong>Toma LEDENT</strong>.</p>
+                </div>
+                <div class="footer-socials">
+                    <a href="https://github.com/tomaledent" target="_blank" title="Mon GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/in/tomaledent" target="_blank" title="Mon LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="mailto:tomaledent@gmail.com" title="Me contacter"><i class="fas fa-envelope"></i></a>
+                </div>
+                <div class="footer-info">
+                    <p>Données : <a href="https://openweathermap.org/" target="_blank">OpenWeather</a> • v2.1</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
